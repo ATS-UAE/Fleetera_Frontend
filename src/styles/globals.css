@@ -1,0 +1,238 @@
+/* FleetVision — Global Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Core Palette */
+  --fv-bg-base:       #0a0e1a;
+  --fv-bg-surface:    #0f1629;
+  --fv-bg-panel:      #141c35;
+  --fv-bg-card:       #1a2540;
+  --fv-bg-hover:      #1f2d4d;
+  --fv-bg-active:     #243358;
+
+  --fv-border:        #1e2d4a;
+  --fv-border-light:  #253558;
+  --fv-border-accent: #2a4080;
+
+  /* Accent system */
+  --fv-accent:        #3b82f6;
+  --fv-accent-dim:    #1d4ed8;
+  --fv-accent-glow:   rgba(59,130,246,0.2);
+  --fv-accent-subtle: rgba(59,130,246,0.08);
+
+  --fv-cyan:          #06b6d4;
+  --fv-emerald:       #10b981;
+  --fv-amber:         #f59e0b;
+  --fv-rose:          #ef4444;
+  --fv-violet:        #8b5cf6;
+
+  /* Text */
+  --fv-text-primary:  #e2e8f0;
+  --fv-text-secondary:#94a3b8;
+  --fv-text-muted:    #4a5568;
+  --fv-text-accent:   #60a5fa;
+
+  /* Status colors */
+  --fv-status-moving:      #10b981;
+  --fv-status-idle:        #f59e0b;
+  --fv-status-stopped:     #6b7280;
+  --fv-status-offline:     #374151;
+  --fv-status-maintenance: #8b5cf6;
+
+  /* Sidebar */
+  --fv-sidebar-w:     280px;
+  --fv-sidebar-w-collapsed: 64px;
+  --fv-topbar-h:      56px;
+
+  /* Typography */
+  --fv-font-sans: 'Inter', -apple-system, sans-serif;
+  --fv-font-mono: 'JetBrains Mono', monospace;
+
+  /* Radius */
+  --fv-r-sm:  6px;
+  --fv-r-md:  10px;
+  --fv-r-lg:  14px;
+  --fv-r-xl:  20px;
+
+  /* Shadows */
+  --fv-shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
+  --fv-shadow-md:  0 4px 16px rgba(0,0,0,0.5);
+  --fv-shadow-lg:  0 8px 32px rgba(0,0,0,0.6);
+  --fv-shadow-glow: 0 0 20px rgba(59,130,246,0.15);
+
+  /* Transitions */
+  --fv-trans-fast: 120ms ease;
+  --fv-trans-med:  220ms cubic-bezier(0.4,0,0.2,1);
+  --fv-trans-slow: 350ms cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+  background: var(--fv-bg-base);
+  color: var(--fv-text-primary);
+  font-family: var(--fv-font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--fv-border-light); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--fv-accent); }
+
+/* Mantine overrides */
+.mantine-Modal-content {
+  background: var(--fv-bg-panel) !important;
+  border: 1px solid var(--fv-border-light) !important;
+}
+.mantine-Modal-header {
+  background: var(--fv-bg-panel) !important;
+  border-bottom: 1px solid var(--fv-border) !important;
+}
+.mantine-TextInput-input,
+.mantine-Select-input,
+.mantine-Textarea-input,
+.mantine-NumberInput-input {
+  background: var(--fv-bg-card) !important;
+  border-color: var(--fv-border-light) !important;
+  color: var(--fv-text-primary) !important;
+}
+.mantine-TextInput-input:focus,
+.mantine-Select-input:focus {
+  border-color: var(--fv-accent) !important;
+  box-shadow: 0 0 0 2px var(--fv-accent-glow) !important;
+}
+.mantine-Notification-root {
+  background: var(--fv-bg-card) !important;
+  border: 1px solid var(--fv-border-light) !important;
+}
+
+/* Leaflet */
+.leaflet-container { background: #0a0e1a !important; font-family: var(--fv-font-sans) !important; }
+.leaflet-tile { filter: brightness(0.7) saturate(0.8) hue-rotate(180deg) invert(1) !important; }
+.leaflet-control-zoom { border: 1px solid var(--fv-border-light) !important; border-radius: var(--fv-r-md) !important; overflow: hidden; }
+.leaflet-control-zoom a { background: var(--fv-bg-card) !important; color: var(--fv-text-primary) !important; border-color: var(--fv-border) !important; }
+.leaflet-control-zoom a:hover { background: var(--fv-bg-hover) !important; }
+.leaflet-control-attribution { background: rgba(10,14,26,0.8) !important; color: var(--fv-text-muted) !important; font-size: 10px !important; }
+.leaflet-popup-content-wrapper { background: var(--fv-bg-card) !important; border: 1px solid var(--fv-border-light) !important; color: var(--fv-text-primary) !important; border-radius: var(--fv-r-md) !important; box-shadow: var(--fv-shadow-lg) !important; }
+.leaflet-popup-tip { background: var(--fv-bg-card) !important; }
+
+/* Permanent vehicle name labels (tooltip) — strip Leaflet's default tooltip chrome
+   since we already style the inner div ourselves. */
+.fv-vehicle-label {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.fv-vehicle-label::before { display: none !important; }
+
+/* Smooth marker glide: Leaflet animates marker position via CSS transform on
+   .leaflet-marker-icon / .leaflet-marker-pane. Adding a transition here makes
+   position updates (e.g. simulated GPS ticks) glide instead of snapping
+   instantly to the new spot.
+   Duration is tuned close to the live-vehicle simulation's 3s tick interval —
+   too short and the marker visibly stops-and-starts between ticks (reads as
+   shaking); too long and it overlaps with the next tick's transition target.
+
+   IMPORTANT: scoped to .fv-live-map only. The Track Player drives its own
+   frame-by-frame requestAnimationFrame interpolation for playback — applying
+   this same CSS transition there would fight the manual animation (every
+   intermediate setLatLng call would kick off its own competing transition),
+   producing stuttery motion instead of smooth motion. */
+.fv-live-map .leaflet-marker-pane .leaflet-marker-icon {
+  transition: transform 2.6s linear;
+}
+.fv-live-map .leaflet-tooltip-pane .leaflet-tooltip {
+  transition: transform 2.6s linear;
+}
+
+/* Map stacking: Leaflet's internal panes/controls can climb high enough to
+   sit above other UI in some setups. Cap the map's own internal stacking low;
+   Mantine portal layers (modals, popovers, notifications) are controlled via
+   the zIndex prop / theme default in main.jsx instead of guessed class names
+   here, since Mantine's internal class names aren't a stable public API. */
+.leaflet-container {
+  z-index: 1 !important;
+}
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-control {
+  z-index: 2 !important;
+}
+
+/* Utility classes */
+.fv-mono { font-family: var(--fv-font-mono); }
+.fv-text-muted { color: var(--fv-text-muted); }
+.fv-text-secondary { color: var(--fv-text-secondary); }
+.fv-text-accent { color: var(--fv-text-accent); }
+
+.fv-pulse {
+  animation: fv-pulse 2s ease-in-out infinite;
+}
+@keyframes fv-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.fv-blink {
+  animation: fv-blink 1s step-end infinite;
+}
+@keyframes fv-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes fv-fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fv-fadeIn { animation: fv-fadeIn var(--fv-trans-med) forwards; }
+
+@keyframes fv-slideRight {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.fv-slideRight { animation: fv-slideRight var(--fv-trans-med) forwards; }
+
+@keyframes fv-spin {
+  to { transform: rotate(360deg); }
+}
+.fv-spin { animation: fv-spin 1s linear infinite; }
+
+/* Drag handle */
+.drag-handle {
+  cursor: grab;
+  color: var(--fv-text-muted);
+  transition: color var(--fv-trans-fast);
+}
+.drag-handle:hover { color: var(--fv-accent); }
+.drag-handle:active { cursor: grabbing; }
+
+/* Reorder mode highlight */
+.reorder-mode-item {
+  border: 1px dashed var(--fv-accent) !important;
+  background: var(--fv-accent-subtle) !important;
+}
+
+/* Status dot */
+.status-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot.moving   { background: var(--fv-status-moving); box-shadow: 0 0 6px var(--fv-status-moving); animation: fv-pulse 2s ease-in-out infinite; }
+.status-dot.idle     { background: var(--fv-status-idle); }
+.status-dot.stopped  { background: var(--fv-status-stopped); }
+.status-dot.offline  { background: var(--fv-status-offline); border: 1px solid var(--fv-border-light); }
+.status-dot.maintenance { background: var(--fv-status-maintenance); }
+.status-dot.online   { background: var(--fv-emerald); box-shadow: 0 0 6px var(--fv-emerald); animation: fv-pulse 2s ease-in-out infinite; }
+.status-dot.on_trip  { background: var(--fv-accent); box-shadow: 0 0 6px var(--fv-accent); animation: fv-pulse 2s ease-in-out infinite; }
+.status-dot.break    { background: var(--fv-amber); }

@@ -1,0 +1,209 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px 12px;
+  border-bottom: 1px solid var(--fv-border);
+  flex-shrink: 0;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vehicleAvatar {
+  width: 44px;
+  height: 44px;
+  border: 1px solid;
+  border-radius: var(--fv-r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vehicleName {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--fv-text-primary);
+}
+
+.vehiclePlate {
+  font-size: 12px;
+  font-family: var(--fv-font-mono);
+  color: var(--fv-text-accent);
+  letter-spacing: 0.5px;
+}
+
+.headerActions {
+  display: flex;
+  gap: 4px;
+}
+
+/* Status banner */
+.statusBanner {
+  margin: 10px 14px;
+  padding: 10px 14px;
+  border: 1px solid;
+  border-radius: var(--fv-r-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.statusLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusText {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.statusRight {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.speedValue {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: var(--fv-font-mono);
+  color: var(--fv-text-primary);
+  line-height: 1;
+}
+
+.speedUnit {
+  font-size: 11px;
+  color: var(--fv-text-muted);
+}
+
+/* Metrics grid */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 0 14px 10px;
+  flex-shrink: 0;
+}
+
+.metricCard {
+  background: var(--fv-bg-card);
+  border: 1px solid var(--fv-border);
+  border-radius: var(--fv-r-sm);
+  padding: 8px 10px;
+}
+
+.metricValue {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--fv-font-mono);
+  line-height: 1;
+}
+
+.metricLabel {
+  display: block;
+  font-size: 10px;
+  color: var(--fv-text-muted);
+  margin-top: 3px;
+}
+
+/* Tab content */
+.tabContent {
+  padding: 6px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.detailRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--fv-border);
+}
+
+.detailIcon {
+  color: var(--fv-text-muted);
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.detailContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.detailLabel {
+  font-size: 10px;
+  color: var(--fv-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.detailValue {
+  font-size: 12px;
+  color: var(--fv-text-primary);
+  font-weight: 500;
+}
+
+.detailValue.mono {
+  font-family: var(--fv-font-mono);
+  color: var(--fv-text-accent);
+  font-size: 11px;
+}
+
+/* Doc cards */
+.docCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: var(--fv-bg-card);
+  border: 1px solid var(--fv-border);
+  border-radius: var(--fv-r-md);
+  margin-bottom: 6px;
+}
+
+.docIcon {
+  width: 32px;
+  height: 32px;
+  background: var(--fv-bg-surface);
+  border: 1px solid var(--fv-border);
+  border-radius: var(--fv-r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.docTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fv-text-primary);
+}
+
+.docDate {
+  font-size: 11px;
+  color: var(--fv-text-muted);
+  font-family: var(--fv-font-mono);
+}

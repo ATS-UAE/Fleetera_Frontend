@@ -1,0 +1,301 @@
+.sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: var(--fv-sidebar-w);
+  height: 100%;
+  background: var(--fv-bg-surface);
+  border-right: 1px solid var(--fv-border);
+  transition: width var(--fv-trans-med);
+  flex-shrink: 0;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.sidebar.collapsed {
+  width: var(--fv-sidebar-w-collapsed);
+}
+
+/* Logo — exact same height as the TopBar so the two rows align precisely.
+   Previously used padding: 16px 12px which let the total height drift above
+   --fv-topbar-h depending on content. Now we use height + justify-content
+   so it's a strict match regardless of content size. */
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 14px;
+  height: var(--fv-topbar-h);
+  min-height: var(--fv-topbar-h);
+  max-height: var(--fv-topbar-h);
+  border-bottom: 1px solid var(--fv-border);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.logoIcon {
+  width: 30px;
+  height: 30px;
+  background: var(--fv-accent-subtle);
+  border: 1px solid var(--fv-border-accent);
+  border-radius: var(--fv-r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--fv-shadow-glow);
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  gap: 1px;
+}
+
+.logoName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fv-text-primary);
+  white-space: nowrap;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.logoTagline {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--fv-accent);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+/* Nav */
+.nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Wrapper div used by the sortable context — needs to be a block so dnd-kit
+   can measure and position it correctly during a drag. */
+.navItemWrap {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 4px;
+  border-radius: var(--fv-r-md);
+  transition: background var(--fv-trans-fast);
+}
+
+.navItemWrap.navItemReorder {
+  border: 1px dashed transparent;
+  transition: border-color var(--fv-trans-fast), background var(--fv-trans-fast);
+}
+
+.navItemWrap.navItemReorder:hover {
+  background: var(--fv-accent-subtle);
+  border-color: var(--fv-accent-glow);
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  flex-shrink: 0;
+  color: var(--fv-text-muted);
+  cursor: grab;
+  padding: 2px;
+  border-radius: 3px;
+  transition: color var(--fv-trans-fast);
+}
+.dragHandle:hover { color: var(--fv-accent); }
+.dragHandle:active { cursor: grabbing; }
+
+.navItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  background: transparent;
+  color: var(--fv-text-secondary);
+  border-radius: var(--fv-r-md);
+  cursor: pointer;
+  transition: all var(--fv-trans-fast);
+  text-align: left;
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: var(--fv-font-sans);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.navItem:hover {
+  background: var(--fv-bg-hover);
+  color: var(--fv-text-primary);
+}
+
+.navItem.active {
+  background: var(--fv-accent-subtle);
+  color: var(--fv-text-accent);
+  border: 1px solid var(--fv-accent-glow);
+}
+
+/* In reorder mode the button itself shouldn't show hover/active highlights
+   since clicking is disabled — interaction is via the drag handle only. */
+.navItem.navItemDraggable:hover {
+  background: transparent;
+  color: var(--fv-text-secondary);
+}
+
+.navIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+}
+
+.navLabel {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.activeBar {
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: var(--fv-accent);
+  border-radius: 3px 0 0 3px;
+}
+
+/* Reorder hint at bottom of nav list */
+.reorderHint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 8px 2px;
+  padding: 6px 10px;
+  background: rgba(59,130,246,0.06);
+  border: 1px dashed rgba(59,130,246,0.25);
+  border-radius: var(--fv-r-sm);
+  font-size: 10px;
+  color: var(--fv-text-accent);
+  opacity: 0.8;
+}
+
+/* Bottom */
+.bottom {
+  flex-shrink: 0;
+  padding-bottom: 8px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--fv-border);
+  margin: 8px 12px;
+}
+
+.reorderToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 8px;
+  padding: 8px 10px;
+  border-radius: var(--fv-r-md);
+  border: 1px solid transparent;
+  transition: all var(--fv-trans-fast);
+}
+
+.reorderToggle.reorderActive {
+  background: rgba(59,130,246,0.08);
+  border-color: rgba(59,130,246,0.25);
+}
+
+.reorderLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fv-text-secondary);
+}
+
+.bottomActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  gap: 4px;
+}
+
+.sidebar.collapsed .bottomActions {
+  flex-direction: column;
+  gap: 4px;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--fv-text-muted);
+  border-radius: var(--fv-r-sm);
+  cursor: pointer;
+  transition: all var(--fv-trans-fast);
+  flex-shrink: 0;
+}
+
+.iconBtn:hover {
+  background: var(--fv-bg-hover);
+  color: var(--fv-text-primary);
+}
+
+.collapseBtn {
+  margin-left: auto;
+}
+
+.sidebar.collapsed .navItemWrap {
+  padding: 0 12px;
+  justify-content: center;
+}
+
+.sidebar.collapsed .navItem {
+  width: 40px;
+  padding: 9px;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar.collapsed .bottomActions .navItem {
+  width: 40px;
+  margin: 0 auto;
+}
+
+.sidebar.collapsed .reorderToggle {
+  justify-content: center;
+  padding: 4px;
+  margin: 4px auto;
+  width: 40px;
+}
+
+.sidebar.collapsed .reorderHint {
+  display: none;
+}
