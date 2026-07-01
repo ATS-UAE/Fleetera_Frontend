@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Sidebar from '@/components/layout/Sidebar/Sidebar';
 import DashboardPage from '@/features/dashboard/components/DashboardPage';
@@ -21,7 +21,13 @@ const PAGES = {
 
 export default function App() {
   const activeTab = useSelector(s => s.ui.activeTab);
+  const theme = useSelector(s => s.ui.theme);
   const ActivePage = PAGES[activeTab] || DashboardPage;
+
+  // Sync theme to <html data-theme="..."> so CSS variable overrides fire.
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>

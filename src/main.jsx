@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { MantineProvider, createTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { ModalsProvider } from '@mantine/modals';
@@ -12,7 +12,7 @@ import '@mantine/dates/styles.css';
 import '@mantine/charts/styles.css';
 import './styles/globals.css';
 
-const theme = createTheme({
+const mantineTheme = createTheme({
   fontFamily: 'Inter, -apple-system, sans-serif',
   fontFamilyMonospace: 'JetBrains Mono, monospace',
   primaryColor: 'blue',
@@ -31,15 +31,24 @@ const theme = createTheme({
   },
 });
 
+/** Bridges the Redux theme state into MantineProvider's colorScheme. */
+function ThemeWrapper() {
+  const theme = useSelector(s => s.ui.theme);
+  return (
+    <MantineProvider theme={mantineTheme} colorScheme={theme} forceColorScheme={theme}>
+      <ModalsProvider>
+        <Notifications position="top-right" limit={5} />
+        <App />
+      </ModalsProvider>
+    </MantineProvider>
+  );
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
-      <MantineProvider theme={theme} defaultColorScheme="dark" forceColorScheme="dark">
-        <ModalsProvider>
-          <Notifications position="top-right" limit={5} />
-          <App />
-        </ModalsProvider>
-      </MantineProvider>
+      <ThemeWrapper />
     </Provider>
   </React.StrictMode>
 );
+

@@ -59,9 +59,6 @@ function AppearancePanel() {
     <div className={styles.panelBody}>
       <div className={styles.themeRow}>
         <IconSun size={14} className={!isDark ? styles.themeIconActive : styles.themeIconDim} />
-        {/* Theme switch — functionality intentionally left as a stub; dispatches
-            setTheme so light/dark CSS can be wired up separately without
-            touching this component again. */}
         <Switch
           size="sm"
           checked={isDark}
@@ -71,7 +68,7 @@ function AppearancePanel() {
         <IconMoon size={14} className={isDark ? styles.themeIconActive : styles.themeIconDim} />
       </div>
       <p className={styles.themeHint}>
-        {isDark ? 'Dark mode' : 'Light mode'} — wired to <code>ui.theme</code>
+        {isDark ? '🌙 Dark mode active' : '☀️ Light mode active'}
       </p>
     </div>
   );
