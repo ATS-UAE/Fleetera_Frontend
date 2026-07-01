@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Core Palette */
+  /* Core Palette — Dark (default) */
   --fv-bg-base:       #0a0e1a;
   --fv-bg-surface:    #0f1629;
   --fv-bg-panel:      #141c35;
@@ -66,6 +66,39 @@
   --fv-trans-slow: 350ms cubic-bezier(0.4,0,0.2,1);
 }
 
+/* ── Light Mode Token Overrides ───────────────────────────────────────────── */
+[data-theme="light"] {
+  /* Core Palette — Light */
+  --fv-bg-base:       #f0f4ff;
+  --fv-bg-surface:    #e8edf8;
+  --fv-bg-panel:      #ffffff;
+  --fv-bg-card:       #f8faff;
+  --fv-bg-hover:      #eaf0ff;
+  --fv-bg-active:     #dde7ff;
+
+  --fv-border:        #d1d9f0;
+  --fv-border-light:  #c4ceeb;
+  --fv-border-accent: #93a8e8;
+
+  /* Accent system stays the same — blue works on light too */
+  --fv-accent:        #2563eb;
+  --fv-accent-dim:    #1d4ed8;
+  --fv-accent-glow:   rgba(37,99,235,0.18);
+  --fv-accent-subtle: rgba(37,99,235,0.07);
+
+  /* Text */
+  --fv-text-primary:  #0f172a;
+  --fv-text-secondary:#334155;
+  --fv-text-muted:    #64748b;
+  --fv-text-accent:   #2563eb;
+
+  /* Shadows — softer in light mode */
+  --fv-shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
+  --fv-shadow-md:  0 4px 16px rgba(0,0,0,0.10);
+  --fv-shadow-lg:  0 8px 32px rgba(0,0,0,0.13);
+  --fv-shadow-glow: 0 0 20px rgba(37,99,235,0.12);
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body, #root {
@@ -112,9 +145,10 @@ html, body, #root {
   border: 1px solid var(--fv-border-light) !important;
 }
 
-/* Leaflet */
-.leaflet-container { background: #0a0e1a !important; font-family: var(--fv-font-sans) !important; }
-.leaflet-tile { filter: brightness(0.7) saturate(0.8) hue-rotate(180deg) invert(1) !important; }
+/* Leaflet — dark mode */
+.leaflet-container { background: var(--fv-bg-base) !important; font-family: var(--fv-font-sans) !important; }
+:not([data-theme="light"]) .leaflet-tile { filter: brightness(0.7) saturate(0.8) hue-rotate(180deg) invert(1) !important; }
+[data-theme="light"] .leaflet-tile { filter: none !important; }
 .leaflet-control-zoom { border: 1px solid var(--fv-border-light) !important; border-radius: var(--fv-r-md) !important; overflow: hidden; }
 .leaflet-control-zoom a { background: var(--fv-bg-card) !important; color: var(--fv-text-primary) !important; border-color: var(--fv-border) !important; }
 .leaflet-control-zoom a:hover { background: var(--fv-bg-hover) !important; }

@@ -1,0 +1,289 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  margin: 4px 8px;
+}
+
+/* ── Root "Settings" button ─────────────────────────────────────────────── */
+.rootBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fv-text-secondary);
+  border-radius: var(--fv-r-md);
+  cursor: pointer;
+  transition: all var(--fv-trans-fast);
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: var(--fv-font-sans);
+}
+
+.rootBtn:hover {
+  background: var(--fv-bg-hover);
+  color: var(--fv-text-primary);
+}
+
+.rootBtn.rootBtnOpen {
+  background: var(--fv-accent-subtle);
+  color: var(--fv-text-accent);
+  border-color: var(--fv-accent-glow);
+}
+
+.rootLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chevron {
+  color: var(--fv-text-muted);
+  transition: transform var(--fv-trans-fast);
+}
+
+.collapsedBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  color: var(--fv-text-muted);
+  border-radius: var(--fv-r-md);
+  cursor: pointer;
+  transition: all var(--fv-trans-fast);
+}
+.collapsedBtn:hover {
+  background: var(--fv-bg-hover);
+  color: var(--fv-text-accent);
+}
+
+/* ── Tree of sub-sections ───────────────────────────────────────────────── */
+.tree {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: 4px;
+  padding-left: 6px;
+  border-left: 1px dashed var(--fv-border-light);
+  margin-left: 14px;
+}
+
+.treeNode {
+  display: flex;
+  flex-direction: column;
+}
+
+.treeBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  border: none;
+  background: transparent;
+  color: var(--fv-text-secondary);
+  border-radius: var(--fv-r-sm);
+  cursor: pointer;
+  transition: all var(--fv-trans-fast);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.treeBtn:hover {
+  background: var(--fv-bg-hover);
+  color: var(--fv-text-primary);
+}
+
+.treeBtn.treeBtnActive {
+  background: var(--fv-accent-subtle);
+  color: var(--fv-text-accent);
+}
+
+/* Small connector dot between the branch line and the label */
+.treeLine {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--fv-border-light);
+  flex-shrink: 0;
+  transition: background var(--fv-trans-fast);
+}
+
+.treeBtn:hover .treeLine,
+.treeBtn.treeBtnActive .treeLine {
+  background: var(--fv-accent);
+}
+
+.treeChevron {
+  margin-left: auto;
+  color: var(--fv-text-muted);
+  flex-shrink: 0;
+}
+
+/* ── Inline expanded panel ──────────────────────────────────────────────── */
+.panelWrap {
+  margin: 4px 0 8px 6px;
+  padding: 10px;
+  background: var(--fv-bg-surface);
+  border: 1px solid var(--fv-border);
+  border-radius: var(--fv-r-md);
+  animation: fv-fadeIn 160ms ease;
+}
+
+@keyframes fv-fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.panelBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Profile panel ──────────────────────────────────────────────────────── */
+.profileRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+
+.profileName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fv-text-primary);
+  margin-bottom: 3px;
+}
+
+.securityRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.25);
+  border-radius: var(--fv-r-sm);
+  font-size: 10.5px;
+  color: var(--fv-emerald);
+}
+
+/* ── Appearance panel ───────────────────────────────────────────────────── */
+.themeRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 4px 0 2px;
+}
+
+.themeIconActive { color: var(--fv-accent); }
+.themeIconDim { color: var(--fv-text-muted); }
+
+.themeHint {
+  font-size: 10px;
+  color: var(--fv-text-muted);
+  text-align: center;
+}
+.themeHint code {
+  background: var(--fv-bg-card);
+  border: 1px solid var(--fv-border);
+  border-radius: 3px;
+  padding: 0 4px;
+  font-family: var(--fv-font-mono);
+  color: var(--fv-text-accent);
+}
+
+/* ── Notifications panel ────────────────────────────────────────────────── */
+.notifPrefs {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--fv-border);
+}
+
+.prefRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--fv-text-secondary);
+}
+
+.notifListHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--fv-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.notifList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.notifItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 7px;
+  background: var(--fv-bg-card);
+  border: 1px solid var(--fv-border);
+  border-radius: var(--fv-r-sm);
+}
+
+.notifIcon {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--fv-r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notifContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.notifVehicle {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fv-text-accent);
+  font-family: var(--fv-font-mono);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notifTime {
+  font-size: 9.5px;
+  color: var(--fv-text-muted);
+}
+
+.notifDismiss {
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity var(--fv-trans-fast);
+}
+.notifItem:hover .notifDismiss {
+  opacity: 1;
+}

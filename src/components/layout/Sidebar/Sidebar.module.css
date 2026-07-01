@@ -16,10 +16,9 @@
   width: var(--fv-sidebar-w-collapsed);
 }
 
-/* Logo — exact same height as the TopBar so the two rows align precisely.
-   Previously used padding: 16px 12px which let the total height drift above
-   --fv-topbar-h depending on content. Now we use height + justify-content
-   so it's a strict match regardless of content size. */
+/* Logo header — fixed height via --fv-topbar-h for a consistent, predictable
+   sidebar header size (this used to align with a TopBar component that has
+   since been removed; the variable name is kept for backward compatibility). */
 .logo {
   display: flex;
   align-items: center;
@@ -202,6 +201,10 @@
 .bottom {
   flex-shrink: 0;
   padding-bottom: 8px;
+  overflow-y: auto;
+  /* max-height is capped at ~55% of viewport so the nav list always stays
+     visible even when all three settings sub-panels are open at once */
+  max-height: 55vh;
 }
 
 .divider {
@@ -238,8 +241,8 @@
 .bottomActions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
+  justify-content: center;
+  padding: 4px 8px 2px;
   gap: 4px;
 }
 
@@ -282,11 +285,6 @@
   padding: 9px;
   justify-content: center;
   flex-shrink: 0;
-}
-
-.sidebar.collapsed .bottomActions .navItem {
-  width: 40px;
-  margin: 0 auto;
 }
 
 .sidebar.collapsed .reorderToggle {
