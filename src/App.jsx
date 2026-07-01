@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Sidebar from '@/components/layout/Sidebar/Sidebar';
-import TopBar from '@/components/layout/TopBar/TopBar';
 import DashboardPage from '@/features/dashboard/components/DashboardPage';
 import VehiclesPage from '@/features/vehicles/components/VehiclesPage';
 import DriversPage from '@/features/drivers/components/DriversPage';
@@ -27,12 +26,9 @@ export default function App() {
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
       <Sidebar />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
-        <TopBar />
-        <main style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-          <ActivePage />
-        </main>
-      </div>
+      <main style={{ flex: 1, overflow: 'hidden', position: 'relative', minWidth: 0 }}>
+        <ActivePage />
+      </main>
     </div>
   );
 }

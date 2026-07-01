@@ -11,6 +11,10 @@ const uiSlice = createSlice({
     activeTab: 'dashboard',
     navOrder: DEFAULT_NAV_ORDER,
     notifications: [],
+    // Settings now lives as an expandable tree pinned to the bottom of the
+    // sidebar, not a routable page — these two control that tree's UI state.
+    settingsTreeOpen: false,
+    settingsActiveSection: null, // 'profile' | 'appearance' | 'notifications' | null
   },
   reducers: {
     toggleSidebar(state) { state.sidebarCollapsed = !state.sidebarCollapsed; },
@@ -28,11 +32,25 @@ const uiSlice = createSlice({
       state.notifications = state.notifications.filter(n => n.id !== action.payload);
     },
     clearNotifications(state) { state.notifications = []; },
+    toggleSettingsTree(state) {
+      state.settingsTreeOpen = !state.settingsTreeOpen;
+      if (!state.settingsTreeOpen) state.settingsActiveSection = null;
+    },
+    setSettingsTreeOpen(state, action) {
+      state.settingsTreeOpen = action.payload;
+      if (!action.payload) state.settingsActiveSection = null;
+    },
+    setSettingsSection(state, action) {
+      // Clicking the same section again collapses it back to just the tree
+      state.settingsActiveSection =
+        state.settingsActiveSection === action.payload ? null : action.payload;
+    },
   },
 });
 
 export const {
   toggleSidebar, setSidebarCollapsed, toggleReorderMode, setReorderMode,
-  setTheme, setActiveTab, setNavOrder, addNotification, removeNotification, clearNotifications
+  setTheme, setActiveTab, setNavOrder, addNotification, removeNotification, clearNotifications,
+  toggleSettingsTree, setSettingsTreeOpen, setSettingsSection,
 } = uiSlice.actions;
 export default uiSlice.reducer;

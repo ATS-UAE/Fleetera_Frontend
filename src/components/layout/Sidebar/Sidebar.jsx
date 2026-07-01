@@ -12,9 +12,10 @@ import { CSS } from '@dnd-kit/utilities';
 import {
   IconLayoutDashboard, IconTruck, IconId, IconUsers,
   IconPlayerPlay, IconShield, IconFileAnalytics,
-  IconChevronLeft, IconChevronRight, IconSettings, IconMenuOrder, IconGripVertical,
+  IconChevronLeft, IconChevronRight, IconMenuOrder, IconGripVertical,
 } from '@tabler/icons-react';
 import { setActiveTab, toggleSidebar, toggleReorderMode, setNavOrder } from '@/store/slices/uiSlice';
+import SettingsTree from './SettingsTree';
 import styles from './Sidebar.module.css';
 
 const NAV_META = {
@@ -114,7 +115,7 @@ export default function Sidebar() {
 
   return (
     <aside className={`${styles.sidebar} ${sidebarCollapsed ? styles.collapsed : ''}`}>
-      {/* Logo — height exactly matches TopBar height via CSS */}
+      {/* Logo — fixed-height header, see Sidebar.module.css */}
       <div className={styles.logo}>
         <div className={styles.logoIcon}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -199,17 +200,13 @@ export default function Sidebar() {
 
         <div className={styles.divider} />
 
+        {/* Settings — pinned to the bottom of the sidebar as an expandable
+            tree (Profile / Appearance / Notifications), not a routable page. */}
+        <SettingsTree isCollapsed={sidebarCollapsed} />
+
+        <div className={styles.divider} />
+
         <div className={styles.bottomActions}>
-          {sidebarCollapsed ? (
-            <Tooltip label="Settings" position="right" offset={12}>
-              <button className={styles.iconBtn}><IconSettings size={16} /></button>
-            </Tooltip>
-          ) : (
-            <button className={styles.navItem}>
-              <span className={styles.navIcon}><IconSettings size={18} /></span>
-              <span className={styles.navLabel}>Settings</span>
-            </button>
-          )}
           <Tooltip label={sidebarCollapsed ? 'Expand' : 'Collapse'} position="right" offset={12}>
             <button
               className={`${styles.iconBtn} ${styles.collapseBtn}`}
