@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { buildVehicleTrackData, formatTrackDuration, getTrackDistanceKm } from './vehicleTracks.js';
 
 export const VEHICLE_STATUSES = {
   MOVING: 'moving',
@@ -18,7 +19,7 @@ export const DRIVER_STATUSES = {
 export const vehicles = [
   {
     id: uuidv4(), name: 'TRK-001', plate: 'WP-CAB-1234', type: 'Heavy Truck',
-    make: 'Volvo', model: 'FH16', year: 2022, color: '#3B82F6',
+    make: 'Volvo', model: 'FH16', year: 2022, color: '#22b553',
     status: VEHICLE_STATUSES.MOVING, speed: 72, fuel: 68, odometer: 142500,
     lat: 7.2906, lng: 80.6337, heading: 45,
     driverId: null, groupId: 'g1',
@@ -36,7 +37,7 @@ export const vehicles = [
   },
   {
     id: uuidv4(), name: 'VAN-023', plate: 'WP-ASD-5678', type: 'Van',
-    make: 'Mercedes', model: 'Sprinter', year: 2021, color: '#10B981',
+    make: 'Mercedes', model: 'Sprinter', year: 2021, color: '#1b84e7',
     status: VEHICLE_STATUSES.IDLE, speed: 0, fuel: 45, odometer: 89300,
     lat: 7.3120, lng: 80.6510, heading: 180,
     driverId: null, groupId: 'g1',
@@ -45,9 +46,10 @@ export const vehicles = [
     insurance: '2025-06-30', service: '2024-09-01',
     sim: '+94779876543', imei: '356938035643810',
     track: [
-      { lat: 7.3050, lng: 80.6480, speed: 55, ts: Date.now() - 1200000 },
-      { lat: 7.3080, lng: 80.6490, speed: 40, ts: Date.now() - 900000 },
-      { lat: 7.3110, lng: 80.6500, speed: 20, ts: Date.now() - 700000 },
+      // Idle/parked the whole window: speed stays ~0 and position doesn't drift.
+      { lat: 7.3120, lng: 80.6510, speed: 0, ts: Date.now() - 1200000 },
+      { lat: 7.3120, lng: 80.6510, speed: 0, ts: Date.now() - 900000 },
+      { lat: 7.3120, lng: 80.6510, speed: 0, ts: Date.now() - 700000 },
       { lat: 7.3120, lng: 80.6510, speed: 0, ts: Date.now() - 600000 },
     ],
   },
@@ -352,3 +354,17 @@ export const tripHistory = [
   { day: 'Sat', distance: 740, fuel: 108, trips: 11 },
   { day: 'Sun', distance: 432, fuel: 64, trips: 7 },
 ];
+
+// Per-vehicle multi-trip mock dataset (vehicle info + related geofences + a full
+// alternating trip/parking track history with per-point battery/speed/satellites).
+// Built here (after vehicles/geofences above are defined) rather than inside
+// vehicleTracks.js, which stays a pure module with no import from this file —
+// otherwise the two modules would import each other and blow up with a
+// "Cannot access before initialization" error.
+export const vehicleTrackData = buildVehicleTrackData(vehicles, geofences);
+
+export function getVehicleTrackData(vehicleId) {
+  return vehicleTrackData.find(entry => entry.vehicle.id === vehicleId) || null;
+}
+
+export { formatTrackDuration, getTrackDistanceKm };
