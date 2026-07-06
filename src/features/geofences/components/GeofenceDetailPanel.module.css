@@ -2,15 +2,66 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
+  animation: panelSlideIn 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+@keyframes panelSlideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Back navigation header — must match sidebar .logo height so borders align */
+.backHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  height: var(--fv-topbar-h);
+  min-height: var(--fv-topbar-h);
+  max-height: var(--fv-topbar-h);
+  border-bottom: 1px solid var(--fv-border);
+  flex-shrink: 0;
+  background: var(--fv-bg-surface);
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 6px;
+  border: 1px solid var(--fv-border);
+  background: var(--fv-bg-card);
+  color: var(--fv-text-secondary);
+  border-radius: var(--fv-r-sm);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 150ms ease;
+}
+
+.backBtn:hover {
+  border-color: var(--fv-accent);
+  color: var(--fv-accent);
+  background: var(--fv-accent-subtle);
+}
+
+.backBtn svg {
+  flex-shrink: 0;
+}
+
+.headerActions {
+  display: flex;
+  gap: 4px;
+}
+
+/* Geofence identity row */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 14px 12px;
-  border-bottom: 1px solid var(--fv-border);
+  padding: 12px 12px 10px;
   flex-shrink: 0;
 }
 
@@ -21,8 +72,8 @@
 }
 
 .shapeAvatar {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border: 1px solid;
   border-radius: var(--fv-r-md);
   display: flex;
@@ -42,15 +93,10 @@
   color: var(--fv-text-muted);
 }
 
-.headerActions {
-  display: flex;
-  gap: 4px;
-}
-
 /* Status banner */
 .statusBanner {
-  margin: 10px 14px;
-  padding: 10px 14px;
+  margin: 6px 12px;
+  padding: 8px 12px;
   border: 1px solid;
   border-radius: var(--fv-r-md);
   display: flex;
@@ -66,7 +112,7 @@
 }
 
 .statusText {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
 }
@@ -75,7 +121,7 @@
 .alertRow {
   display: flex;
   gap: 6px;
-  margin: 0 14px 10px;
+  margin: 0 12px 8px;
   flex-shrink: 0;
 }
 
@@ -104,7 +150,7 @@
 
 /* Description */
 .descBox {
-  margin: 0 14px 10px;
+  margin: 0 12px 8px;
   padding: 10px;
   background: var(--fv-bg-card);
   border: 1px solid var(--fv-border);
@@ -128,10 +174,11 @@
 
 /* Detail rows */
 .tabContent {
-  padding: 4px 14px 14px;
+  padding: 4px 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 2px;
+  overflow-y: auto;
 }
 
 .detailRow {

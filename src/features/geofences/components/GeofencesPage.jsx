@@ -63,12 +63,27 @@ export default function GeofencesPage() {
   });
 
   useEffect(() => {
-    if (!mapInstance.current && mapRef.current) {
-      mapInstance.current = L.map(mapRef.current, { center: [7.29, 80.63], zoom: 11, zoomControl: false });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(mapInstance.current);
-      L.control.zoom({ position: 'bottomright' }).addTo(mapInstance.current);
+    // StrictMode-safe: always clean up previous instance
+    if (mapInstance.current) {
+      mapInstance.current.remove();
+      mapInstance.current = null;
     }
-    return () => { if (mapInstance.current) { mapInstance.current.remove(); mapInstance.current = null; } };
+    shapesRef.current = {};
+
+    if (mapRef.current) {
+      const map = L.map(mapRef.current, { center: [7.29, 80.63], zoom: 11, zoomControl: false });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(map);
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+      mapInstance.current = map;
+    }
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+      shapesRef.current = {};
+    };
   }, []);
 
   // Draw geofences on map
@@ -124,62 +139,74 @@ export default function GeofencesPage() {
 
   return (
     <div className={styles.page}>
-      {/* Left list */}
+      {/* Left panel — shows list OR detail */}
       <div className={styles.listPanel}>
-        <div className={styles.listHeader}>
-          <div className={styles.listTitle}>
-            <span>Geofences</span>
-            <button className={styles.addBtn} onClick={() => { setEditTarget(null); setFormOpen(true); }}><IconPlus size={14} /></button>
-          </div>
-          <div className={styles.statRow}>
-            {[
-              { l: 'Total', v: items.length, c: '#60a5fa' },
-              { l: 'Active', v: items.filter(g => g.active).length, c: '#10b981' },
-              { l: 'Circle', v: items.filter(g => g.type === 'circle').length, c: '#8b5cf6' },
-              { l: 'Poly', v: items.filter(g => g.type === 'polygon').length, c: '#f59e0b' },
-            ].map(s => (
-              <div key={s.l} className={styles.statPill}>
-                <span style={{ color: s.c, fontWeight: 700, fontSize: 14, fontFamily: 'var(--fv-font-mono)' }}>{s.v}</span>
-                <span style={{ color: 'var(--fv-text-muted)', fontSize: 9, textTransform: 'uppercase' }}>{s.l}</span>
+        {selectedGeofence ? (
+          <GeofenceDetailPanel
+            geofence={selectedGeofence}
+            onClose={() => dispatch(setSelected(null))}
+            onEdit={() => { setEditTarget(selectedGeofence); setFormOpen(true); }}
+            onDelete={() => handleDelete(selectedGeofence.id)}
+            onToggleActive={() => dispatch(toggleGeofenceActive(selectedGeofence.id))}
+          />
+        ) : (
+          <>
+            <div className={styles.listHeader}>
+              <div className={styles.listTitle}>
+                <span>Geofences</span>
+                <button className={styles.addBtn} onClick={() => { setEditTarget(null); setFormOpen(true); }}><IconPlus size={14} /></button>
               </div>
-            ))}
-          </div>
-          <TextInput placeholder="Search geofences..." leftSection={<IconSearch size={13} />} value={filter.search} onChange={e => dispatch(setFilter({ search: e.target.value }))} size="xs" />
-          <Select data={[{ value: 'all', label: 'All Status' }, { value: 'true', label: 'Active' }, { value: 'false', label: 'Inactive' }]} value={filter.active} onChange={v => dispatch(setFilter({ active: v }))} size="xs" />
-        </div>
-
-        <div className={styles.list}>
-          {filtered.map(g => (
-            <div key={g.id} className={`${styles.geofenceCard} ${selected === g.id ? styles.selected : ''} ${!g.active ? styles.inactive : ''}`} onClick={() => dispatch(setSelected(g.id === selected ? null : g.id))}>
-              <div className={styles.cardLeft}>
-                <div className={styles.shapeIcon} style={{ borderColor: g.color + '60', background: g.color + '15' }}>
-                  {g.type === 'circle' ? <IconCircle size={14} style={{ color: g.color }} /> : <IconPolygon size={14} style={{ color: g.color }} />}
-                </div>
-                <div>
-                  <div className={styles.geoName}>{g.name}</div>
-                  <div className={styles.geoMeta}>{g.type} · {g.type === 'circle' ? `r:${g.radius}m` : `${g.coordinates?.length ?? 0} pts`}</div>
-                </div>
+              <div className={styles.statRow}>
+                {[
+                  { l: 'Total', v: items.length, c: '#60a5fa' },
+                  { l: 'Active', v: items.filter(g => g.active).length, c: '#10b981' },
+                  { l: 'Circle', v: items.filter(g => g.type === 'circle').length, c: '#8b5cf6' },
+                  { l: 'Poly', v: items.filter(g => g.type === 'polygon').length, c: '#f59e0b' },
+                ].map(s => (
+                  <div key={s.l} className={styles.statPill}>
+                    <span style={{ color: s.c, fontWeight: 700, fontSize: 14, fontFamily: 'var(--fv-font-mono)' }}>{s.v}</span>
+                    <span style={{ color: 'var(--fv-text-muted)', fontSize: 9, textTransform: 'uppercase' }}>{s.l}</span>
+                  </div>
+                ))}
               </div>
-              <div className={styles.cardRight}>
-                <div className={styles.geoAlerts}>
-                  {g.alertOnEnter && <span className={styles.alertTag} style={{ color: '#10b981', borderColor: '#10b98140', background: '#10b98110' }}>IN</span>}
-                  {g.alertOnExit && <span className={styles.alertTag} style={{ color: '#ef4444', borderColor: '#ef444440', background: '#ef444410' }}>OUT</span>}
-                </div>
-                <div className={styles.cardActions} onClick={e => e.stopPropagation()}>
-                  <ActionIcon size="xs" variant="subtle" color={g.active ? 'green' : 'gray'} onClick={() => dispatch(toggleGeofenceActive(g.id))}>
-                    {g.active ? <IconEye size={12} /> : <IconEyeOff size={12} />}
-                  </ActionIcon>
-                  <ActionIcon size="xs" variant="subtle" color="blue" onClick={() => { setEditTarget(g); setFormOpen(true); }}><IconEdit size={12} /></ActionIcon>
-                  <ActionIcon size="xs" variant="subtle" color="red" onClick={() => handleDelete(g.id)}><IconTrash size={12} /></ActionIcon>
-                </div>
-              </div>
+              <TextInput placeholder="Search geofences..." leftSection={<IconSearch size={13} />} value={filter.search} onChange={e => dispatch(setFilter({ search: e.target.value }))} size="xs" />
+              <Select data={[{ value: 'all', label: 'All Status' }, { value: 'true', label: 'Active' }, { value: 'false', label: 'Inactive' }]} value={filter.active} onChange={v => dispatch(setFilter({ active: v }))} size="xs" />
             </div>
-          ))}
-          {filtered.length === 0 && <div className={styles.empty}><IconShield size={32} opacity={0.3} /><p>No geofences</p></div>}
-        </div>
+
+            <div className={styles.list}>
+              {filtered.map(g => (
+                <div key={g.id} className={`${styles.geofenceCard} ${selected === g.id ? styles.selected : ''} ${!g.active ? styles.inactive : ''}`} onClick={() => dispatch(setSelected(g.id === selected ? null : g.id))}>
+                  <div className={styles.cardLeft}>
+                    <div className={styles.shapeIcon} style={{ borderColor: g.color + '60', background: g.color + '15' }}>
+                      {g.type === 'circle' ? <IconCircle size={14} style={{ color: g.color }} /> : <IconPolygon size={14} style={{ color: g.color }} />}
+                    </div>
+                    <div>
+                      <div className={styles.geoName}>{g.name}</div>
+                      <div className={styles.geoMeta}>{g.type} · {g.type === 'circle' ? `r:${g.radius}m` : `${g.coordinates?.length ?? 0} pts`}</div>
+                    </div>
+                  </div>
+                  <div className={styles.cardRight}>
+                    <div className={styles.geoAlerts}>
+                      {g.alertOnEnter && <span className={styles.alertTag} style={{ color: '#10b981', borderColor: '#10b98140', background: '#10b98110' }}>IN</span>}
+                      {g.alertOnExit && <span className={styles.alertTag} style={{ color: '#ef4444', borderColor: '#ef444440', background: '#ef444410' }}>OUT</span>}
+                    </div>
+                    <div className={styles.cardActions} onClick={e => e.stopPropagation()}>
+                      <ActionIcon size="xs" variant="subtle" color={g.active ? 'green' : 'gray'} onClick={() => dispatch(toggleGeofenceActive(g.id))}>
+                        {g.active ? <IconEye size={12} /> : <IconEyeOff size={12} />}
+                      </ActionIcon>
+                      <ActionIcon size="xs" variant="subtle" color="blue" onClick={() => { setEditTarget(g); setFormOpen(true); }}><IconEdit size={12} /></ActionIcon>
+                      <ActionIcon size="xs" variant="subtle" color="red" onClick={() => handleDelete(g.id)}><IconTrash size={12} /></ActionIcon>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {filtered.length === 0 && <div className={styles.empty}><IconShield size={32} opacity={0.3} /><p>No geofences</p></div>}
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Map */}
+      {/* Map — takes full remaining space */}
       <div style={{ flex: 1, position: 'relative' }}>
         <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
         <div style={{
@@ -191,19 +218,6 @@ export default function GeofencesPage() {
           Click a geofence to view details
         </div>
       </div>
-
-      {/* Right: detail panel (slides in when geofence selected) */}
-      {selectedGeofence && (
-        <div className={styles.detailPanel}>
-          <GeofenceDetailPanel
-            geofence={selectedGeofence}
-            onClose={() => dispatch(setSelected(null))}
-            onEdit={() => { setEditTarget(selectedGeofence); setFormOpen(true); }}
-            onDelete={() => handleDelete(selectedGeofence.id)}
-            onToggleActive={() => dispatch(toggleGeofenceActive(selectedGeofence.id))}
-          />
-        </div>
-      )}
 
       <GeofenceFormModal opened={formOpen} onClose={() => setFormOpen(false)} geofence={editTarget} />
     </div>

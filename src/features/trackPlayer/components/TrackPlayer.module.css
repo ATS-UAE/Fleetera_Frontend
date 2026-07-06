@@ -7,9 +7,13 @@
   overflow-y: auto; display: flex; flex-direction: column; gap: 0;
 }
 
+/* Must match sidebar .logo height so bottom borders align */
 .controlHeader {
   display: flex; align-items: center; gap: 8px;
-  padding: 14px 14px 10px;
+  padding: 0 14px;
+  height: var(--fv-topbar-h);
+  min-height: var(--fv-topbar-h);
+  max-height: var(--fv-topbar-h);
   font-size: 13px; font-weight: 700;
   color: var(--fv-text-secondary);
   text-transform: uppercase; letter-spacing: 1px;

@@ -156,33 +156,16 @@ html, body, #root {
 .leaflet-popup-content-wrapper { background: var(--fv-bg-card) !important; border: 1px solid var(--fv-border-light) !important; color: var(--fv-text-primary) !important; border-radius: var(--fv-r-md) !important; box-shadow: var(--fv-shadow-lg) !important; }
 .leaflet-popup-tip { background: var(--fv-bg-card) !important; }
 
-/* Permanent vehicle name labels (tooltip) — strip Leaflet's default tooltip chrome
-   since we already style the inner div ourselves. */
-.fv-vehicle-label {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-.fv-vehicle-label::before { display: none !important; }
-
 /* Smooth marker glide: Leaflet animates marker position via CSS transform on
    .leaflet-marker-icon / .leaflet-marker-pane. Adding a transition here makes
    position updates (e.g. simulated GPS ticks) glide instead of snapping
-   instantly to the new spot.
-   Duration is tuned close to the live-vehicle simulation's 3s tick interval —
-   too short and the marker visibly stops-and-starts between ticks (reads as
-   shaking); too long and it overlaps with the next tick's transition target.
+   instantly to the new spot. Since vehicle name labels are now embedded inside
+   each marker's divIcon, they move together with the arrow automatically.
 
    IMPORTANT: scoped to .fv-live-map only. The Track Player drives its own
    frame-by-frame requestAnimationFrame interpolation for playback — applying
-   this same CSS transition there would fight the manual animation (every
-   intermediate setLatLng call would kick off its own competing transition),
-   producing stuttery motion instead of smooth motion. */
+   this same CSS transition there would fight the manual animation. */
 .fv-live-map .leaflet-marker-pane .leaflet-marker-icon {
-  transition: transform 2.6s linear;
-}
-.fv-live-map .leaflet-tooltip-pane .leaflet-tooltip {
   transition: transform 2.6s linear;
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import L from 'leaflet';
 import { createVehiclePuckIcon, ensurePuckStyles } from '@/lib/mapUtils/vehicleIcon';
 
@@ -12,28 +12,39 @@ export default function VehicleMap({ vehicles, selected, onSelect }) {
   const mapInstanceRef = useRef(null);
   const markersRef = useRef({});
   const routeLinesRef = useRef({});
-  const beaconRef = useRef(null);
 
+  // Initialize map once — use a ref flag separate from mapInstanceRef
+  // to survive React StrictMode's mount→unmount→remount cycle.
   useEffect(() => {
-    if (!mapInstanceRef.current) {
-      mapInstanceRef.current = L.map(mapRef.current, {
-        center: [7.29, 80.63],
-        zoom: 12,
-        zoomControl: false,
-      });
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap',
-      }).addTo(mapInstanceRef.current);
-
-      L.control.zoom({ position: 'bottomright' }).addTo(mapInstanceRef.current);
-      ensurePuckStyles();
+    // Always clean up any previous instance first
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.remove();
+      mapInstanceRef.current = null;
     }
+    // Clear stale marker refs since the old map is gone
+    markersRef.current = {};
+    routeLinesRef.current = {};
+
+    const map = L.map(mapRef.current, {
+      center: [7.29, 80.63],
+      zoom: 12,
+      zoomControl: false,
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap',
+    }).addTo(map);
+
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+    ensurePuckStyles();
+
+    mapInstanceRef.current = map;
+
     return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
+      map.remove();
+      mapInstanceRef.current = null;
+      markersRef.current = {};
+      routeLinesRef.current = {};
     };
   }, []);
 
@@ -49,18 +60,12 @@ export default function VehicleMap({ vehicles, selected, onSelect }) {
       const color = STATUS_COLORS[vehicle.status] || '#6b7280';
       const heading = vehicle.heading || 0;
       const isMoving = vehicle.status === 'moving';
+      const name = vehicle.name;
 
       const existing = markersRef.current[vehicle.id];
 
       if (existing) {
-        // setLatLng alone drives the CSS-transitioned glide (see globals.css
-        // .fv-live-map .leaflet-marker-icon transition). Calling setIcon()
-        // on every update — even when nothing about the icon's *appearance*
-        // changed — was the real cause of the "shaking": Leaflet replaces the
-        // icon's DOM content on setIcon, which resets the in-flight CSS
-        // transition's transform baseline, making the marker visibly snap
-        // back before re-animating. So we only rebuild the icon when
-        // something that actually affects its look has changed.
+        // Only update icon when appearance-relevant props changed
         const meta = existing._fvMeta || {};
         const iconNeedsUpdate =
           meta.color !== color ||
@@ -71,12 +76,12 @@ export default function VehicleMap({ vehicles, selected, onSelect }) {
         existing.setLatLng([vehicle.lat, vehicle.lng]);
 
         if (iconNeedsUpdate) {
-          const icon = createVehiclePuckIcon({ color, heading, isSelected, isMoving });
+          const icon = createVehiclePuckIcon({ color, heading, isSelected, isMoving, name });
           existing.setIcon(icon);
           existing._fvMeta = { color, heading, isSelected, isMoving };
         }
       } else {
-        const icon = createVehiclePuckIcon({ color, heading, isSelected, isMoving });
+        const icon = createVehiclePuckIcon({ color, heading, isSelected, isMoving, name });
         const marker = L.marker([vehicle.lat, vehicle.lng], { icon, riseOnHover: true })
           .addTo(map)
           .on('click', () => onSelect(vehicle.id));
@@ -84,30 +89,7 @@ export default function VehicleMap({ vehicles, selected, onSelect }) {
         markersRef.current[vehicle.id] = marker;
       }
 
-      // Permanent name label (always visible, not just on hover/click)
-      // so vehicles are identifiable at a glance after zoom/pan.
-      const labelHtml = `
-        <div style="
-          background: rgba(10,14,26,0.92);
-          border: 1px solid ${color}55;
-          color: ${color};
-          font-family: 'JetBrains Mono', monospace;
-          font-size: 10px; font-weight: 700;
-          padding: 1px 6px; border-radius: 4px;
-          white-space: nowrap; pointer-events: none;
-          box-shadow: 0 1px 4px rgba(0,0,0,0.4);
-        ">${vehicle.name}</div>`;
-      if (!markersRef.current[vehicle.id]._fvLabelBound) {
-        markersRef.current[vehicle.id].bindTooltip(labelHtml, {
-          permanent: true, direction: 'top', offset: [0, isSelected ? -28 : -22], className: 'fv-vehicle-label', opacity: 1,
-        });
-        markersRef.current[vehicle.id]._fvLabelBound = true;
-      } else {
-        markersRef.current[vehicle.id].setTooltipContent(labelHtml);
-      }
-
-      // Popup — only rebind when the displayed values actually changed, to
-      // avoid unnecessary DOM churn on every effect run.
+      // Popup
       const popupKey = `${vehicle.name}|${vehicle.plate}|${Math.round(vehicle.speed)}|${vehicle.fuel}|${vehicle.status}`;
       if (markersRef.current[vehicle.id]._fvPopupKey !== popupKey) {
         const popupContent = `
@@ -156,12 +138,7 @@ export default function VehicleMap({ vehicles, selected, onSelect }) {
     });
   }, [vehicles, selected, onSelect]);
 
-  // Pan to selected vehicle — only on an actual selection change, not on every
-  // GPS position tick. Previously this effect depended on `vehicles` (which
-  // changes reference every 3s tick), so map.flyTo() was re-triggering and
-  // re-animating the whole view every tick while something was selected —
-  // a second, independent source of the "shaking" complaint, separate from
-  // the marker icon issue.
+  // Pan to selected vehicle
   useEffect(() => {
     if (!mapInstanceRef.current || !selected) return;
     const v = vehicles.find(v => v.id === selected);
@@ -170,64 +147,6 @@ export default function VehicleMap({ vehicles, selected, onSelect }) {
     markersRef.current[v.id]?.openPopup();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
-
-  // Locator beacon: a bright pulsing ring drawn at the selected vehicle's
-  // current position, independent of zoom level / map clutter, so the
-  // vehicle is unmistakable even in a dense area. This DOES need to track
-  // `vehicles` so the beacon itself follows the vehicle as it moves — but
-  // unlike the panning effect above, updating a marker's position via
-  // setLatLng doesn't move the *map view*, so it doesn't cause any visible
-  // camera shake; it just keeps the ring glued to the (smoothly gliding)
-  // vehicle puck.
-  useEffect(() => {
-    if (!mapInstanceRef.current) return;
-    const map = mapInstanceRef.current;
-
-    if (!selected) {
-      if (beaconRef.current) {
-        beaconRef.current.remove();
-        beaconRef.current = null;
-      }
-      return;
-    }
-
-    const v = vehicles.find(v => v.id === selected);
-    if (!v) return;
-
-    if (beaconRef.current) {
-      beaconRef.current.setLatLng([v.lat, v.lng]);
-      return;
-    }
-
-    const beaconIcon = L.divIcon({
-      html: `
-        <div style="position:relative; width:64px; height:64px;">
-          <div style="
-            position:absolute; inset:0; border-radius:50%;
-            border: 2px solid #60a5fa;
-            box-shadow: 0 0 0 4px rgba(96,165,250,0.15), 0 0 24px rgba(96,165,250,0.5);
-            animation: fv-beacon-ring 1.6s ease-out infinite;
-          "></div>
-          <div style="
-            position:absolute; left:50%; top:50%;
-            width:6px; height:6px; border-radius:50%;
-            background:#60a5fa; transform: translate(-50%,-50%);
-            box-shadow: 0 0 8px #60a5fa;
-          "></div>
-        </div>
-        <style>
-          @keyframes fv-beacon-ring {
-            0%   { transform: scale(0.4); opacity: 1; }
-            100% { transform: scale(1.3); opacity: 0; }
-          }
-        </style>
-      `,
-      className: '',
-      iconSize: [64, 64],
-      iconAnchor: [32, 32],
-    });
-    beaconRef.current = L.marker([v.lat, v.lng], { icon: beaconIcon, interactive: false, zIndexOffset: -1000 }).addTo(map);
-  }, [selected, vehicles]);
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>

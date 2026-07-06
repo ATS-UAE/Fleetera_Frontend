@@ -22,11 +22,6 @@ export default function VehiclesPage() {
     return () => clearInterval(tickRef.current);
   }, [dispatch]);
 
-  // Memoized: without this, filteredVehicles was a brand-new array on every
-  // render of this page (which happens often — list hover states, etc.), which
-  // made VehicleMap's marker-update effect re-run far more often than the
-  // actual 3s GPS tick, repeatedly disturbing the in-flight CSS glide
-  // transition and contributing to the "shaking" look.
   const filteredVehicles = useMemo(() => {
     const ordered = sortOrder.map(id => items.find(v => v.id === id)).filter(Boolean);
     return ordered.filter(v => {
@@ -50,34 +45,44 @@ export default function VehiclesPage() {
     dispatch(addNotification({ type: 'success', title: 'Vehicle removed', message: 'Vehicle deleted successfully.' }));
   };
 
-  // Memoized for the same reason as filteredVehicles above — a stable function
-  // reference so VehicleMap's effect (which depends on onSelect) doesn't
-  // re-fire just because VehiclesPage re-rendered for an unrelated reason.
   const handleMapSelect = useCallback((id) => {
     dispatch(setSelected(id === selected ? null : id));
   }, [dispatch, selected]);
 
+  const handleBackToList = () => {
+    dispatch(setSelected(null));
+  };
+
   return (
     <div className={styles.page}>
-      {/* Left: vehicle list panel */}
+      {/* Left: vehicle list panel — shows either list or detail view */}
       <div className={styles.listPanel}>
-        <VehicleList
-          vehicles={filteredVehicles}
-          selected={selected}
-          filter={filter}
-          reorderMode={reorderMode}
-          sortOrder={sortOrder}
-          allItems={items}
-          onSelect={id => dispatch(setSelected(id === selected ? null : id))}
-          onFilter={f => dispatch(setFilter(f))}
-          onAdd={() => { setEditTarget(null); setFormOpen(true); }}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onReorder={order => dispatch(reorderVehicles(order))}
-        />
+        {selectedVehicle ? (
+          <VehicleDetailPanel
+            vehicle={selectedVehicle}
+            onClose={handleBackToList}
+            onEdit={() => handleEdit(selectedVehicle)}
+            onDelete={() => handleDelete(selectedVehicle.id)}
+          />
+        ) : (
+          <VehicleList
+            vehicles={filteredVehicles}
+            selected={selected}
+            filter={filter}
+            reorderMode={reorderMode}
+            sortOrder={sortOrder}
+            allItems={items}
+            onSelect={id => dispatch(setSelected(id === selected ? null : id))}
+            onFilter={f => dispatch(setFilter(f))}
+            onAdd={() => { setEditTarget(null); setFormOpen(true); }}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onReorder={order => dispatch(reorderVehicles(order))}
+          />
+        )}
       </div>
 
-      {/* Center: map */}
+      {/* Center: map — now takes full remaining width */}
       <div className={styles.mapPanel}>
         <VehicleMap
           vehicles={filteredVehicles}
@@ -85,18 +90,6 @@ export default function VehiclesPage() {
           onSelect={handleMapSelect}
         />
       </div>
-
-      {/* Right: detail panel (slides in when vehicle selected) */}
-      {selectedVehicle && (
-        <div className={styles.detailPanel}>
-          <VehicleDetailPanel
-            vehicle={selectedVehicle}
-            onClose={() => dispatch(setSelected(null))}
-            onEdit={() => handleEdit(selectedVehicle)}
-            onDelete={() => handleDelete(selectedVehicle.id)}
-          />
-        </div>
-      )}
 
       <VehicleFormModal
         opened={formOpen}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Badge, Tabs, Progress, ActionIcon, Tooltip } from '@mantine/core';
 import {
-  IconX, IconEdit, IconTrash, IconTruck, IconGasStation,
+  IconArrowLeft, IconEdit, IconTrash, IconTruck, IconGasStation,
   IconSpeedboat, IconMapPin, IconCalendar, IconPhone,
   IconDeviceMobile, IconEngine, IconRoute, IconClock,
   IconShield,
@@ -31,21 +31,28 @@ export default function VehicleDetailPanel({ vehicle, onClose, onEdit, onDelete 
 
   return (
     <div className={styles.panel}>
-      {/* Header */}
+      {/* Back navigation header */}
+      <div className={styles.backHeader}>
+        <button className={styles.backBtn} onClick={onClose} title="Back to vehicle list">
+          <IconArrowLeft size={16} />
+          <span>Vehicles</span>
+        </button>
+        <div className={styles.headerActions}>
+          <Tooltip label="Edit vehicle"><ActionIcon size="sm" variant="subtle" color="blue" onClick={onEdit}><IconEdit size={14} /></ActionIcon></Tooltip>
+          <Tooltip label="Delete vehicle"><ActionIcon size="sm" variant="subtle" color="red" onClick={onDelete}><IconTrash size={14} /></ActionIcon></Tooltip>
+        </div>
+      </div>
+
+      {/* Vehicle identity */}
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <div className={styles.vehicleAvatar} style={{ borderColor: statusColor + '60', background: statusColor + '15' }}>
-            <IconTruck size={22} style={{ color: statusColor }} />
+            <IconTruck size={20} style={{ color: statusColor }} />
           </div>
           <div>
             <div className={styles.vehicleName}>{vehicle.name}</div>
             <div className={styles.vehiclePlate}>{vehicle.plate}</div>
           </div>
-        </div>
-        <div className={styles.headerActions}>
-          <Tooltip label="Edit vehicle"><ActionIcon size="sm" variant="subtle" color="blue" onClick={onEdit}><IconEdit size={14} /></ActionIcon></Tooltip>
-          <Tooltip label="Delete vehicle"><ActionIcon size="sm" variant="subtle" color="red" onClick={onDelete}><IconTrash size={14} /></ActionIcon></Tooltip>
-          <ActionIcon size="sm" variant="subtle" onClick={onClose}><IconX size={14} /></ActionIcon>
         </div>
       </div>
 

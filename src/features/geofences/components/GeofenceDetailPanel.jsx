@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActionIcon, Tooltip, Badge } from '@mantine/core';
 import {
-  IconX, IconEdit, IconTrash, IconCircle, IconPolygon,
+  IconArrowLeft, IconEdit, IconTrash, IconCircle, IconPolygon,
   IconMapPin, IconRuler, IconBell, IconBellOff, IconCalendar,
   IconEye, IconEyeOff,
 } from '@tabler/icons-react';
@@ -25,7 +25,19 @@ export default function GeofenceDetailPanel({ geofence, onClose, onEdit, onDelet
 
   return (
     <div className={styles.panel}>
-      {/* Header */}
+      {/* Back navigation header */}
+      <div className={styles.backHeader}>
+        <button className={styles.backBtn} onClick={onClose} title="Back to geofence list">
+          <IconArrowLeft size={16} />
+          <span>Geofences</span>
+        </button>
+        <div className={styles.headerActions}>
+          <Tooltip label="Edit geofence"><ActionIcon size="sm" variant="subtle" color="blue" onClick={onEdit}><IconEdit size={14} /></ActionIcon></Tooltip>
+          <Tooltip label="Delete geofence"><ActionIcon size="sm" variant="subtle" color="red" onClick={onDelete}><IconTrash size={14} /></ActionIcon></Tooltip>
+        </div>
+      </div>
+
+      {/* Geofence identity */}
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <div className={styles.shapeAvatar} style={{ borderColor: color + '60', background: color + '15' }}>
@@ -35,11 +47,6 @@ export default function GeofenceDetailPanel({ geofence, onClose, onEdit, onDelet
             <div className={styles.geoName}>{geofence.name}</div>
             <div className={styles.geoType}>{geofence.type === 'circle' ? 'Circular zone' : 'Polygon zone'}</div>
           </div>
-        </div>
-        <div className={styles.headerActions}>
-          <Tooltip label="Edit geofence"><ActionIcon size="sm" variant="subtle" color="blue" onClick={onEdit}><IconEdit size={14} /></ActionIcon></Tooltip>
-          <Tooltip label="Delete geofence"><ActionIcon size="sm" variant="subtle" color="red" onClick={onDelete}><IconTrash size={14} /></ActionIcon></Tooltip>
-          <ActionIcon size="sm" variant="subtle" onClick={onClose}><IconX size={14} /></ActionIcon>
         </div>
       </div>
 
