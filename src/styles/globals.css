@@ -253,3 +253,48 @@ html, body, #root {
 .status-dot.online   { background: var(--fv-emerald); box-shadow: 0 0 6px var(--fv-emerald); animation: fv-pulse 2s ease-in-out infinite; }
 .status-dot.on_trip  { background: var(--fv-accent); box-shadow: 0 0 6px var(--fv-accent); animation: fv-pulse 2s ease-in-out infinite; }
 .status-dot.break    { background: var(--fv-amber); }
+
+/* ── Geofence edit mode styles ──────────────────────────────────────────────── */
+
+/* Editable vertex markers — show grab cursor (drag to move, click to delete) */
+.geofence-vertex-editable {
+  cursor: grab !important;
+}
+.geofence-vertex-editable:active {
+  cursor: grabbing !important;
+}
+
+/* Resize handle cursor */
+.geofence-resize-handle {
+  cursor: ew-resize !important;
+}
+
+/* Delete button on circle */
+.geofence-delete-circle-btn {
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+.geofence-delete-circle-btn:hover div {
+  background: rgba(239, 68, 68, 1) !important;
+  transform: scale(1.05);
+}
+
+/* Tooltip for closing polygon */
+.geofence-close-tooltip,
+.geofence-delete-tooltip {
+  background: rgba(15, 22, 41, 0.92) !important;
+  border: 1px solid var(--fv-border-accent) !important;
+  color: var(--fv-text-primary) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  padding: 3px 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  white-space: nowrap !important;
+}
+
+.geofence-delete-tooltip {
+  border-color: rgba(239, 68, 68, 0.4) !important;
+  color: #fca5a5 !important;
+}
