@@ -1,109 +1,144 @@
 .page { display: flex; height: 100%; overflow: hidden; }
 
-.controlPanel {
-  width: 280px; flex-shrink: 0;
-  background: var(--fv-bg-surface);
-  border-right: 1px solid var(--fv-border);
-  overflow-y: auto; display: flex; flex-direction: column; gap: 0;
-}
-
-/* Must match sidebar .logo height so bottom borders align */
-.controlHeader {
-  display: flex; align-items: center; gap: 8px;
-  padding: 0 14px;
-  height: var(--fv-topbar-h);
-  min-height: var(--fv-topbar-h);
-  max-height: var(--fv-topbar-h);
-  font-size: 13px; font-weight: 700;
-  color: var(--fv-text-secondary);
-  text-transform: uppercase; letter-spacing: 1px;
-  border-bottom: 1px solid var(--fv-border);
-  flex-shrink: 0;
-}
-
-.section {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--fv-border);
-}
-
-.sectionLabel {
-  font-size: 10px; font-weight: 700;
-  color: var(--fv-text-muted);
-  text-transform: uppercase; letter-spacing: 1px;
-  margin-bottom: 8px;
-}
-
-.dateInputs { display: flex; flex-direction: column; gap: 5px; }
-.dateInput {
-  width: 100%; padding: 6px 10px;
-  background: var(--fv-bg-card);
-  border: 1px solid var(--fv-border-light);
-  border-radius: var(--fv-r-sm);
-  color: var(--fv-text-primary);
-  font-size: 12px; font-family: var(--fv-font-sans);
-  outline: none; cursor: pointer;
-}
-.dateInput:focus { border-color: var(--fv-accent); }
-
-.statsGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.statBox { background: var(--fv-bg-card); border: 1px solid var(--fv-border); border-radius: var(--fv-r-sm); padding: 8px 10px; }
-.statVal { display: block; font-size: 16px; font-weight: 700; font-family: var(--fv-font-mono); line-height: 1; }
-.statLbl { font-size: 9px; color: var(--fv-text-muted); text-transform: uppercase; margin-top: 3px; display: block; }
-
-.eventLog { flex: 1; }
-.eventList { display: flex; flex-direction: column; gap: 6px; }
-.eventItem { display: flex; align-items: flex-start; gap: 8px; padding: 7px; background: var(--fv-bg-card); border: 1px solid var(--fv-border); border-radius: var(--fv-r-sm); }
-.eventDot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
-.eventType { font-size: 12px; font-weight: 600; color: var(--fv-text-primary); text-transform: capitalize; }
-.eventTime { font-size: 10px; color: var(--fv-text-muted); font-family: var(--fv-font-mono); }
-.noEvents { font-size: 12px; color: var(--fv-text-muted); text-align: center; padding: 12px 0; }
-
 /* Map */
 .mapArea { flex: 1; position: relative; overflow: hidden; }
 .map { width: 100%; height: 100%; }
 
-/* HUD */
-.hud {
-  position: absolute; top: 12px; left: 12px; z-index: 1000;
-  background: rgba(10,14,26,0.88); backdrop-filter: blur(10px);
-  border: 1px solid var(--fv-border-light);
+/* Segment detail card — shown above the marker when a track-bar segment is
+   clicked. `left`/`top` are set inline to the marker's live screen position;
+   this transform shifts the card up and centers it above that point, with a
+   small gap for the pointer arrow below it. */
+.segmentCard {
+  position: absolute; z-index: 900; width: 300px;
+  transform: translate(-50%, calc(-100% - 14px));
+  background: var(--fv-bg-panel); border: 1px solid var(--fv-border-light);
+  border-radius: var(--fv-r-lg); box-shadow: var(--fv-shadow-lg);
+  overflow: visible;
+}
+.segmentCard::after {
+  content: ''; position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 8px solid transparent; border-right: 8px solid transparent;
+  border-top: 8px solid var(--fv-bg-panel);
+  filter: drop-shadow(0 2px 1px rgba(0,0,0,0.15));
+}
+.segmentCardHeader {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+  padding: 12px 14px; border-bottom: 1px solid var(--fv-border);
+}
+.segmentCardRange { font-size: 13px; font-weight: 700; color: var(--fv-text-primary); font-family: var(--fv-font-mono); }
+.segmentCardDuration { font-size: 12px; color: var(--fv-text-muted); margin-top: 2px; }
+.segmentCardVehicle {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-bottom: 1px solid var(--fv-border);
+  font-size: 13px; font-weight: 600; color: var(--fv-text-primary);
+}
+.segmentCardVehicle .iconBtn { margin-left: auto; }
+.segmentCardLocations { padding: 10px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+.segmentLocationItem { display: flex; align-items: flex-start; gap: 8px; }
+.segmentLocationDotStart { color: var(--fv-emerald); flex-shrink: 0; margin-top: 1px; }
+.segmentLocationDotEnd { color: var(--fv-emerald); flex-shrink: 0; margin-top: 1px; }
+.segmentLocationLabel { font-size: 12px; color: var(--fv-text-primary); line-height: 1.4; }
+.segmentLocationTime { font-size: 10px; color: var(--fv-text-muted); font-family: var(--fv-font-mono); margin-top: 2px; }
+
+/* Bottom dock: vehicle picker button + collapsible vehicle-rows card + the always-visible transport bar */
+.bottomDock {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 1000;
+  padding: 0 12px 12px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.vehiclePickerBtn { align-self: flex-start; box-shadow: var(--fv-shadow-lg); }
+
+.vehicleMenu { padding: 8px; max-height: 260px; overflow-y: auto; }
+.vehicleMenuItem { padding: 4px 0; }
+.noEvents { font-size: 12px; color: var(--fv-text-muted); text-align: center; padding: 12px 0; }
+
+/* Timeline stack: vehicle rows + transport bar share one x-axis and one playhead.
+   --tp-label-width is the fixed width of the left-hand label column in both the
+   vehicle rows and the transport bar, so their track/timeline columns line up. */
+.timelineStack {
+  --tp-label-width: 340px;
+  position: relative;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.sharedPlayhead {
+  position: absolute; top: 0; bottom: 0; width: 2px;
+  background: var(--fv-accent); transform: translateX(-1px);
+  box-shadow: 0 0 6px var(--fv-accent-glow);
+  cursor: ew-resize; z-index: 5;
+}
+
+/* Vehicle rows card */
+.vehicleRowsCard {
+  background: var(--fv-bg-surface);
+  border: 1px solid var(--fv-border);
   border-radius: var(--fv-r-lg);
-  padding: 10px 16px;
+  box-shadow: var(--fv-shadow-lg);
+  max-height: 280px; overflow-y: auto;
+}
+
+.vehicleRow { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--fv-border); }
+.vehicleRow:last-child { border-bottom: none; }
+
+.vehicleRowHeader { display: flex; align-items: center; gap: 8px; width: var(--tp-label-width); flex-shrink: 0; }
+.vehicleRowName { font-size: 13px; font-weight: 600; color: var(--fv-text-primary); }
+.statusDot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.vehicleRowBattery {
+  display: flex; align-items: center; gap: 2px;
+  font-size: 11px; color: var(--fv-text-muted); font-family: var(--fv-font-mono);
+  flex-shrink: 0;
+}
+
+.iconBtn {
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; margin-left: 4px;
+  border: none; background: transparent;
+  color: var(--fv-text-muted); border-radius: var(--fv-r-sm);
+  cursor: pointer; transition: all var(--fv-trans-fast);
+}
+.iconBtn:hover { color: var(--fv-accent); background: var(--fv-bg-active); }
+.vehicleRowHeader .iconBtn:last-child { margin-left: 4px; }
+.vehicleRowHeader .iconBtn:nth-last-child(2) { margin-left: auto; }
+
+.vehicleRowBars { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+
+.trackBar {
+  position: relative; width: 100%; height: 8px;
+  background: var(--fv-bg-active); border-radius: 4px; overflow: hidden;
+  cursor: default;
+}
+.trackSegment { position: absolute; top: 0; height: 100%; cursor: pointer; }
+.trackSegment:hover { filter: brightness(1.15); }
+
+.durationPopup { padding: 6px 10px; }
+.durationCategory { font-size: 9px; font-weight: 700; color: var(--fv-text-accent); text-transform: uppercase; letter-spacing: 0.5px; }
+.durationLabel { font-size: 10px; color: var(--fv-text-muted); text-transform: capitalize; }
+.durationValue { font-size: 13px; font-weight: 700; color: var(--fv-text-primary); font-family: var(--fv-font-mono); }
+.durationTotal { font-size: 10px; color: var(--fv-text-muted); margin-top: 4px; padding-top: 4px; border-top: 1px solid var(--fv-border); font-family: var(--fv-font-mono); }
+
+/* Transport bar */
+.transportBar {
+  background: color-mix(in srgb, var(--fv-bg-panel) 92%, transparent); backdrop-filter: blur(12px);
+  border: 1px solid var(--fv-border); border-radius: var(--fv-r-lg);
+  box-shadow: var(--fv-shadow-lg);
+  /* Padding + gap match .vehicleRow exactly so both rows' track columns start at
+     the same x — the shared playhead is measured from this row alone. */
+  padding: 10px 12px;
   display: flex; align-items: center; gap: 12px;
 }
-.hudItem { display: flex; align-items: center; gap: 5px; }
-.hudValue { font-size: 14px; font-weight: 700; color: var(--fv-text-primary); font-family: var(--fv-font-mono); }
-.hudUnit { font-size: 10px; color: var(--fv-text-muted); }
-.hudDivider { width: 1px; height: 18px; background: var(--fv-border); }
 
-/* Playback bar */
-.playbackBar {
-  position: absolute; bottom: 0; left: 0; right: 0; z-index: 1000;
-  background: rgba(10,14,26,0.92); backdrop-filter: blur(12px);
-  border-top: 1px solid var(--fv-border);
-  padding: 12px 20px;
-  display: flex; flex-direction: column; gap: 10px;
+.transportLeft { display: flex; align-items: center; gap: 6px; width: var(--tp-label-width); flex-shrink: 0; }
+
+.chevronBtn {
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 34px;
+  border: none; background: transparent;
+  color: var(--fv-text-muted); cursor: pointer;
 }
-
-.timeline { display: flex; align-items: center; gap: 10px; }
-.timeLabel { font-size: 10px; color: var(--fv-text-muted); font-family: var(--fv-font-mono); white-space: nowrap; flex-shrink: 0; }
-.sliderWrap { flex: 1; }
-
-.timeSlider {
-  width: 100%; height: 4px; appearance: none;
-  background: linear-gradient(to right, var(--fv-accent) var(--progress, 0%), var(--fv-bg-active) var(--progress, 0%));
-  border-radius: 4px; outline: none; cursor: pointer;
-}
-.timeSlider::-webkit-slider-thumb {
-  appearance: none; width: 14px; height: 14px;
-  border-radius: 50%; background: var(--fv-accent);
-  border: 2px solid white; cursor: grab;
-  box-shadow: 0 0 8px rgba(59,130,246,0.5);
-}
-
-.controls { display: flex; align-items: center; gap: 16px; }
-.controlLeft { display: flex; align-items: center; gap: 6px; }
-.controlRight { display: flex; align-items: center; gap: 5px; margin-left: auto; }
+.chevronBtn:hover { color: var(--fv-accent); }
 
 .ctrlBtn {
   display: flex; align-items: center; justify-content: center;
@@ -113,35 +148,75 @@
   cursor: pointer; transition: all var(--fv-trans-fast);
 }
 .ctrlBtn:hover { border-color: var(--fv-accent); color: var(--fv-accent); }
+.ctrlBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.ctrlBtn:disabled:hover { border-color: var(--fv-border); color: var(--fv-text-secondary); }
 
 .playBtn {
   width: 42px; height: 42px;
   background: var(--fv-accent); border-color: var(--fv-accent);
   color: white; border-radius: 50%;
-  box-shadow: 0 0 16px rgba(59,130,246,0.4);
+  box-shadow: 0 0 16px var(--fv-accent-glow);
 }
-.playBtn:hover { background: #2563eb; border-color: #2563eb; color: white; }
+.playBtn:hover { background: var(--fv-accent-dim); border-color: var(--fv-accent-dim); color: white; }
+.playBtn:disabled { background: var(--fv-bg-card); border-color: var(--fv-border); box-shadow: none; }
 
-.progressInfo { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
-.progressText { font-size: 11px; color: var(--fv-text-muted); font-family: var(--fv-font-mono); }
-.progressBar { width: 100%; max-width: 200px; height: 3px; background: var(--fv-bg-active); border-radius: 3px; overflow: hidden; }
-.progressFill { height: 100%; background: var(--fv-accent); border-radius: 3px; transition: width 0.1s linear; }
+.speedControl { display: flex; align-items: center; gap: 8px; width: 130px; }
+.speedValue { font-size: 12px; font-weight: 700; color: var(--fv-text-primary); font-family: var(--fv-font-mono); width: 34px; flex-shrink: 0; }
+.speedSlider { flex: 1; }
 
-.speedLabel { font-size: 11px; color: var(--fv-text-muted); }
-.speedBtn {
-  padding: 4px 9px; border: 1px solid var(--fv-border);
-  background: transparent; color: var(--fv-text-muted);
-  border-radius: var(--fv-r-sm); font-size: 11px; font-weight: 600;
-  cursor: pointer; transition: all var(--fv-trans-fast);
+.transportTimeline { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.hourLabels { display: flex; align-items: center; gap: 8px; }
+.hourLabelsTicks { flex: 1; display: flex; justify-content: space-between; font-size: 10px; color: var(--fv-text-muted); font-family: var(--fv-font-mono); }
+.timelinePlaceholder { font-size: 12px; color: var(--fv-text-muted); text-align: center; padding: 8px 0; }
+
+.zoomResetBtn {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border: none; background: transparent;
+  color: var(--fv-text-muted); cursor: pointer;
 }
-.speedBtn:hover { border-color: var(--fv-accent); color: var(--fv-accent); }
-.speedBtn.speedActive { background: var(--fv-accent-subtle); border-color: var(--fv-accent); color: var(--fv-text-accent); }
+.zoomResetBtn:hover { color: var(--fv-accent); }
+
+.rangeTrack {
+  position: relative; width: 100%; height: 8px;
+  background: var(--fv-accent-subtle); border-radius: 4px;
+  cursor: pointer;
+}
+.rangeFill { position: absolute; top: 0; left: 0; height: 100%; background: var(--fv-bg-active); opacity: 0.5; border-radius: 4px; }
+
+/* Date range popover */
+.dateRangeDropdown { padding: 12px; }
+.dateRangeBody { display: flex; gap: 14px; }
+
+.presetList { display: flex; flex-direction: column; gap: 2px; padding-right: 12px; border-right: 1px solid var(--fv-border); }
+.presetItem {
+  text-align: left; white-space: nowrap;
+  padding: 6px 10px; border: none; background: transparent;
+  color: var(--fv-text-secondary); font-size: 12px; font-family: inherit;
+  border-radius: var(--fv-r-sm); cursor: pointer;
+}
+.presetItem:hover { background: var(--fv-bg-active); color: var(--fv-text-primary); }
+.presetItem:disabled { opacity: 0.4; cursor: not-allowed; }
+.presetItem:disabled:hover { background: transparent; color: var(--fv-text-secondary); }
+
+.dateRangeCalendar { display: flex; flex-direction: column; gap: 8px; }
+.timeRow { display: flex; gap: 8px; }
+.timeRow > * { flex: 1; }
+
+.dateRangeFooter {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--fv-border);
+}
+.resetBtn {
+  border: none; background: transparent; cursor: pointer;
+  color: var(--fv-text-muted); font-size: 12px; font-family: inherit;
+}
+.resetBtn:hover { color: var(--fv-text-primary); }
 
 /* Empty overlay */
 .emptyOverlay {
   position: absolute; inset: 0; z-index: 500;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(10,14,26,0.6); backdrop-filter: blur(2px);
+  background: color-mix(in srgb, var(--fv-bg-base) 60%, transparent); backdrop-filter: blur(2px);
 }
 .emptyCard {
   display: flex; flex-direction: column; align-items: center; gap: 12px;

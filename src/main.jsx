@@ -28,6 +28,7 @@ const mantineTheme = createTheme({
     Modal: { defaultProps: { zIndex: 2000 } },
     Drawer: { defaultProps: { zIndex: 2000 } },
     Popover: { defaultProps: { zIndex: 2100 } },
+    Tooltip: { defaultProps: { zIndex: 2100 } },
   },
 });
 
