@@ -1,0 +1,23 @@
+.page {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.listPanel {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--fv-border);
+  background: var(--fv-bg-surface);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.mapPanel {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}

@@ -1,0 +1,257 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  animation: panelSlideIn 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes panelSlideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Back navigation header — must match sidebar .logo height so borders align */
+.backHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  height: var(--fv-topbar-h);
+  min-height: var(--fv-topbar-h);
+  max-height: var(--fv-topbar-h);
+  border-bottom: 1px solid var(--fv-border);
+  flex-shrink: 0;
+  background: var(--fv-bg-surface);
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 6px;
+  border: 1px solid var(--fv-border);
+  background: var(--fv-bg-card);
+  color: var(--fv-text-secondary);
+  border-radius: var(--fv-r-sm);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 150ms ease;
+}
+
+.backBtn:hover {
+  border-color: var(--fv-accent);
+  color: var(--fv-accent);
+  background: var(--fv-accent-subtle);
+}
+
+.backBtn svg {
+  flex-shrink: 0;
+}
+
+.headerActions {
+  display: flex;
+  gap: 4px;
+}
+
+/* Vehicle identity row */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px 10px;
+  flex-shrink: 0;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vehicleAvatar {
+  width: 40px;
+  height: 40px;
+  border: 1px solid;
+  border-radius: var(--fv-r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vehicleName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fv-text-primary);
+}
+
+.vehiclePlate {
+  font-size: 11px;
+  font-family: var(--fv-font-mono);
+  color: var(--fv-text-accent);
+  letter-spacing: 0.5px;
+}
+
+/* Status banner */
+.statusBanner {
+  margin: 6px 12px;
+  padding: 8px 12px;
+  border: 1px solid;
+  border-radius: var(--fv-r-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.statusLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusText {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.statusRight {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.speedValue {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: var(--fv-font-mono);
+  color: var(--fv-text-primary);
+  line-height: 1;
+}
+
+.speedUnit {
+  font-size: 10px;
+  color: var(--fv-text-muted);
+}
+
+/* Metrics grid */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  margin: 0 12px 8px;
+  flex-shrink: 0;
+}
+
+.metricCard {
+  background: var(--fv-bg-card);
+  border: 1px solid var(--fv-border);
+  border-radius: var(--fv-r-sm);
+  padding: 7px 9px;
+}
+
+.metricValue {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--fv-font-mono);
+  line-height: 1;
+}
+
+.metricLabel {
+  display: block;
+  font-size: 9px;
+  color: var(--fv-text-muted);
+  margin-top: 3px;
+}
+
+/* Tab content */
+.tabContent {
+  padding: 6px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.detailRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--fv-border);
+}
+
+.detailIcon {
+  color: var(--fv-text-muted);
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.detailContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.detailLabel {
+  font-size: 10px;
+  color: var(--fv-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.detailValue {
+  font-size: 12px;
+  color: var(--fv-text-primary);
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.detailValue.mono {
+  font-family: var(--fv-font-mono);
+  color: var(--fv-text-accent);
+  font-size: 11px;
+}
+
+/* Doc cards */
+.docCard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: var(--fv-bg-card);
+  border: 1px solid var(--fv-border);
+  border-radius: var(--fv-r-md);
+  margin-bottom: 5px;
+}
+
+.docIcon {
+  width: 30px;
+  height: 30px;
+  background: var(--fv-bg-surface);
+  border: 1px solid var(--fv-border);
+  border-radius: var(--fv-r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.docTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fv-text-primary);
+}
+
+.docDate {
+  font-size: 10px;
+  color: var(--fv-text-muted);
+  font-family: var(--fv-font-mono);
+}

@@ -1,0 +1,24 @@
+import { configureStore } from '@reduxjs/toolkit';
+import vehiclesReducer from './slices/vehiclesSlice';
+import driversReducer from './slices/driversSlice';
+import geofencesReducer from './slices/geofencesSlice';
+import trackPlayerReducer from './slices/trackPlayerSlice';
+import uiReducer from './slices/uiSlice';
+import columnVisibilityReducer from './slices/columnVisibilitySlice';
+
+export const store = configureStore({
+  reducer: {
+    vehicles: vehiclesReducer,
+    drivers: driversReducer,
+    geofences: geofencesReducer,
+    trackPlayer: trackPlayerReducer,
+    ui: uiReducer,
+    columnVisibility: columnVisibilityReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false }),
+});
+
+export type AppDispatch = typeof store.dispatch;
+export type AppStore = typeof store;
+export default store;
